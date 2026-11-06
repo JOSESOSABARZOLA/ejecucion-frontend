@@ -1,0 +1,42 @@
+.page-heading-kicker {
+  color: var(--color-primary);
+}
+
+.page-heading-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.page-heading-subtitle {
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.page-data-header {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  margin-bottom: 0;
+  margin-top: 1rem;
+}
+
+[data-theme="light"] .page-heading-title {
+  color: var(--color-secondary);
+}
+
+[data-theme="light"] .page-heading-subtitle {
+  color: #5a6d99;
+}
+
+[data-theme="dark"] .page-heading-kicker {
+  color: #f4f8ff;
+}
+
+[data-theme="dark"] .page-heading-title {
+  color: #f4f8ff;
+}
+
+[data-theme="dark"] .page-heading-subtitle {
+  color: rgba(237, 244, 255, 0.76);
+}

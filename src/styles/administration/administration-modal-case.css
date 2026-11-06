@@ -1,0 +1,382 @@
+.app-modules-case-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(96vw, 1680px);
+  max-width: min(96vw, 1680px);
+  height: 90vh;
+  max-height: 90vh;
+  overflow: hidden;
+}
+
+.app-modules-case-modal-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-modules-case-modal-tabs {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-modules-case-modal-tab-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.app-modules-case-modal-tab-content--docs {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.app-modules-case-modal-tab-content--docs .app-modules-case-modal-docs-layout {
+  flex: 1;
+  min-height: 0;
+}
+
+.app-modules-case-modal-docs-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  height: 100%;
+  min-height: 0;
+}
+
+.app-modules-case-modal-docs-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  container-type: size;
+  container-name: caseDocsList;
+}
+
+.app-modules-case-modal-docs-directions {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.app-modules-case-modal-direction-item {
+  flex-shrink: 0;
+}
+
+.app-modules-case-modal-direction-cards {
+  max-height: 40cqh;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.app-modules-case-modal-direction-error {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(239, 68, 68, 0.08);
+  color: rgb(185, 28, 28);
+  font-size: 0.875rem;
+}
+
+.app-modules-case-modal-direction-cards .document-list-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: auto;
+}
+
+.app-modules-case-modal-direction-cards .document-list {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: visible;
+}
+
+.app-modules-case-modal-direction-cards .document-list-loading,
+.app-modules-case-modal-direction-cards .document-list-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 6rem;
+}
+
+.app-modules-case-modal-docs-preview {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.app-modules-case-modal-docs-preview .pdf-viewer-container {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+}
+
+.app-modules-case-modal-docs-empty {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 20rem;
+  padding: 3rem;
+  border: 1px solid rgba(209, 213, 219, 1);
+  border-radius: 0.5rem;
+  background-color: rgb(243, 244, 246);
+  color: rgb(107, 114, 128);
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .app-modules-case-modal-docs-layout {
+    grid-template-columns: 1fr 2fr;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 1023px) {
+  .app-modules-case-modal-docs-preview {
+    min-height: 20rem;
+  }
+}
+
+[data-theme="dark"] .app-modules-case-modal-docs-empty {
+  border-color: var(--app-shell-dark-panel-border);
+  background-color: rgba(15, 23, 42, 0.4);
+  color: rgba(224, 233, 255, 0.72);
+}
+
+[data-theme="dark"] .app-modules-case-modal-direction-error {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: rgba(252, 165, 165, 0.95);
+}
+
+.app-modules-case-layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-modules-case-main-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-modules-case-main-column .app-modules-case-modal-tabs {
+  flex: 1;
+  min-height: 0;
+}
+
+.app-modules-case-main-column .app-modules-case-modal-tab-content {
+  flex: 1;
+  min-height: 0;
+}
+
+@media (min-width: 1024px) {
+  .app-modules-case-layout--split {
+    display: grid;
+    grid-template-columns: 65fr 35fr;
+    align-items: stretch;
+  }
+
+  .app-modules-case-layout--split > .divider {
+    display: none;
+  }
+}
+
+@media (max-width: 1023px) {
+  .app-modules-case-layout--split .app-modules-case-observation-panel {
+    flex: 1;
+    min-height: 0;
+    max-height: 50%;
+  }
+}
+
+.app-modules-case-observation-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0.75rem 0.75rem 0.5rem;
+  background-color: var(--color-base-200);
+}
+
+.app-modules-case-observation-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(209, 213, 219, 1);
+  border-radius: 0.75rem;
+  flex-shrink: 0;
+}
+
+.app-modules-case-observation-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-modules-case-observation-list .app-item-list--observations {
+  flex: 1;
+}
+
+.app-modules-case-observation-empty {
+  margin: 0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: rgb(243, 244, 246);
+  color: rgb(107, 114, 128);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+[data-theme="dark"] .app-modules-case-observation-form-card {
+  border-color: var(--app-shell-dark-panel-border);
+}
+
+[data-theme="dark"] .app-modules-case-observation-empty {
+  background-color: rgba(15, 23, 42, 0.4);
+  color: rgba(224, 233, 255, 0.72);
+}
+
+.app-modules-case-observation-duplicate-hint {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: rgb(185, 28, 28);
+}
+
+.app-modules-case-observation-total-label {
+  margin: 0;
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgb(55, 65, 81);
+}
+
+[data-theme="dark"] .app-modules-case-observation-total-label {
+  color: rgba(224, 233, 255, 0.82);
+}
+
+.app-item-list--observations {
+  background-color: transparent;
+  gap: 0.5rem;
+}
+
+.app-item-list--observations .app-item-list-row {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-rows: auto auto;
+  align-items: start;
+  column-gap: 0.5rem;
+  row-gap: 0.35rem;
+  padding: 0.5rem 0.75rem;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.app-item-list--observations .app-item-list-row:hover {
+  background-color: var(--b2, oklch(var(--b2)));
+  border-color: var(--bc, oklch(var(--bc) / 0.5));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.app-item-list--observations .app-item-list-index {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: start;
+  padding-top: 0.1rem;
+}
+
+.app-item-list--observations .app-item-list-primary {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.app-item-list--observations .app-item-list-identifying {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+}
+
+.app-item-list--observations .app-item-list-complementary {
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.app-item-list--observations .app-item-list-row--with-actions
+  .app-item-list-primary {
+  grid-row: 1 / span 2;
+}
+
+.app-item-list--observations .app-item-list-secondary {
+  grid-column: 3;
+  grid-row: 1;
+  flex-shrink: 0;
+  align-self: start;
+  justify-content: flex-end;
+  gap: 0;
+}
+
+.app-item-list--observations .app-item-list-actions {
+  grid-column: 4;
+  grid-row: 1;
+  align-self: start;
+}
+
+[data-theme="dark"] .app-modules-case-observation-duplicate-hint {
+  color: rgba(252, 165, 165, 0.95);
+}
+
+.app-modules-case-observation-panel-actions {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--bc, oklch(var(--bc) / 0.2));
+}
+
+.app-modules-case-observations-alert {
+  flex-shrink: 0;
+  margin: 0.75rem 1rem 0.75rem;
+  padding: 0.75rem 1rem;
+  min-height: 0;
+  overflow: hidden;
+}

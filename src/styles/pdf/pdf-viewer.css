@@ -1,0 +1,481 @@
+/* PDF Viewer Styles */
+
+/* Container */
+.pdf-viewer-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  max-height: 1000px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  position: relative;
+}
+
+/* Content Area */
+.pdf-content {
+  /* padding-top: 12px; */
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  background-color: #e8e8e8;
+  position: relative;
+  /* padding: 12px; */
+  /* min-height: 400px; */
+}
+
+/* .pdf-content canvas {
+  max-width: 100%;
+  max-height: 95%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: 1px solid #ccc;
+} */
+
+/* React-PDF Page Styles */
+/* .pdf-content > div {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+} */
+
+.react-pdf__Page {
+  position: relative;
+}
+
+.react-pdf__Page__canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+.react-pdf__Page__textContent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.react-pdf__Page__annotations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Loading States */
+.pdf-loading,
+.pdf-loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 14px;
+  padding: 16px;
+}
+
+.pdf-loading-spinner::after {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #1976d2;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Error State */
+.pdf-error {
+  color: #d32f2f;
+  background-color: #ffebee;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Controls */
+.pdf-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  flex-shrink: 0;
+}
+
+/* Controles verticales en la izquierda central del visor */
+.pdf-controls-vertical {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  max-height: 130px;
+  gap: 6px;
+  padding: 6px;
+  background-color: rgba(255, 255, 255, 0.98);
+  border: 1px solid #999;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  pointer-events: auto;
+  overflow: hidden;
+}
+
+.pdf-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.pdf-btn:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  border-color: #bbb;
+}
+
+.pdf-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pdf-btn-prev,
+.pdf-btn-next {
+  min-width: 100px;
+}
+
+/* Botones de navegación vertical */
+.pdf-btn-nav-vertical {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 24px;
+  padding: 0;
+  border-radius: 3px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.pdf-btn-nav-vertical:hover:not(:disabled) {
+  background-color: #1976d2;
+  color: #fff;
+  border-color: #1976d2;
+  transform: scale(1.1);
+}
+
+.pdf-btn-nav-vertical:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* Arrow component styles */
+.pdf-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 12px;
+  font-weight: bold;
+  transition: transform 0.2s ease;
+}
+
+.pdf-arrow-up,
+.pdf-arrow-down {
+  display: inline-block;
+}
+
+/* Indicador de página vertical */
+.pdf-page-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 2px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  width: 100%;
+}
+
+.pdf-page-input-vertical {
+  width: 100%;
+  height: 20px;
+  padding: 0px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: #1976d2;
+  background-color: #fff;
+}
+
+.pdf-page-input-vertical:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 4px rgba(25, 118, 210, 0.3);
+}
+
+.pdf-page-divider {
+  font-size: 8px;
+  color: #999;
+  font-weight: bold;
+  line-height: 0.6;
+}
+
+.pdf-page-total-vertical {
+  padding-bottom: 5px;
+  font-size: 12px;
+  color: #666;
+  /* font-weight: 600; */
+  line-height: 0.6;
+}
+
+/* Document List Styles */
+
+.document-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.document-list-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.document-list-loading,
+.document-list-empty {
+  padding: 24px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.document-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Document Card */
+.document-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.document-card:hover {
+  border-color: #1976d2;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.document-card.selected {
+  border-color: #1976d2;
+  background-color: #e3f2fd;
+}
+
+.document-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.document-name {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: #666;
+  flex-wrap: wrap;
+}
+
+.document-type {
+  padding: 2px 8px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.document-date,
+.document-size {
+  color: #999;
+}
+
+.document-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.btn-view,
+.btn-download {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+}
+
+.btn-view:hover {
+  background-color: #1976d2;
+  color: #fff;
+  border-color: #1976d2;
+}
+
+.btn-download:hover {
+  background-color: #4caf50;
+  color: #fff;
+  border-color: #4caf50;
+}
+
+.btn-download {
+  min-width: auto;
+  padding: 6px 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pdf-viewer-container {
+    max-height: 400px;
+  }
+
+  .pdf-controls {
+    flex-wrap: wrap;
+  }
+
+  .pdf-btn {
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .document-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .document-actions {
+    margin-left: 0;
+  }
+
+  .document-list {
+    max-height: 250px;
+  }
+}
+
+/* ── Zoom ────────────────────────────────────────────────────────────────────────────────────── */
+
+/* Flota sobre la esquina inferior izquierda, enfrente de la navegación de páginas (que vive a la
+   derecha): así ninguno de los dos tapa el texto de la página. */
+.pdf-zoom {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.92);
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.pdf-zoom-btn {
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.pdf-zoom-nivel {
+  min-width: 52px;
+  padding: 0 6px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+.pdf-zoom-nivel:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* 🔴 Con la página ampliada, `justify-content: center` sobre un contenedor con scroll RECORTA por la
+   izquierda: lo que se sale por ese lado deja de ser alcanzable, porque el desbordamiento de un
+   flex centrado no genera scroll hacia atrás. Centrando por margen, el sobrante reparte a los dos
+   lados y se puede llegar a todo. */
+.pdf-content > .react-pdf__Document {
+  margin: auto;
+}

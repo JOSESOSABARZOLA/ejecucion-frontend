@@ -1,0 +1,45 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# `docs/` se ignora por defecto: viene del repositorio heredado, donde guardaba
+# recursos de diseño y no documentación. Se acota a `docs/*` (en vez de `docs`)
+# para poder EXCEPTUAR archivos concretos: con el directorio entero ignorado, git
+# no admite negaciones dentro de él.
+docs/*
+# El documento de decisión y límites del MOTOR DE ACCIONES sí se versiona: es el
+# artefacto declarado de la Fase 03.18 (Plan 10, T-0318-44), y un límite que no
+# viaja con el repositorio no lo encuentra quien toque el motor.
+!docs/motor-de-acciones.md
+docs/styles
+node_modules
+dist
+dist-ssr
+*.local
+
+.env
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.env.local
+
+# Bitácora interna (local-only)
+BITACORA.md
+
+# Imágenes Docker exportadas (docker save). frontend.tar pesa ~24MB: NUNCA a git.
+*.tar
+# Artefacto de herramienta de indexado.
+/.codegraph

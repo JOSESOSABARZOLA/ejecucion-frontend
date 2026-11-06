@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "types": ["node"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  /* `guardasArquitectura.test.ts` entra aquí y no en el proyecto de la app: es tooling que corre en
+     Node (arranca el script de guardas como proceso hijo), y este es el proyecto que declara
+     `types: ["node"]`. Está excluido de tsconfig.app.json en el mismo commit. */
+  "include": ["vite.config.ts", "src/config/guardasArquitectura.test.ts"]
+}

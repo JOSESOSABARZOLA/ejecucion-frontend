@@ -1,0 +1,47 @@
+/* ============================================================================
+   Generic list layout — container and list spacing
+============================================================================ */
+
+.app-data-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 100%;
+}
+
+.app-data-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ==========================================================================
+   Lista de datos OCUPADA (recarga en curso) — 2026-09-17
+   --------------------------------------------------------------------------
+   La bandeja no se desmonta mientras vuelve a consultar: conserva los
+   resultados anteriores y baja de intensidad. Es lo que sustituye al velo a
+   pantalla completa, que se montaba y desmontaba en cada búsqueda y hacía
+   parpadear la pantalla entera.
+
+   La transición es OBLIGATORIA aquí: sin ella, el salto de opacidad sería un
+   parpadeo más pequeño, no una atenuación.
+   ========================================================================== */
+.app-data-list-busy {
+  transition:
+    opacity 180ms ease,
+    filter 180ms ease;
+}
+
+.app-data-list-busy.is-busy {
+  opacity: 0.55;
+  /* Sin interacción mientras llega el reemplazo: pulsar «Remitir» sobre un
+     lote que está a punto de ser sustituido por otro accionaría el que no es. */
+  pointer-events: none;
+}
+
+/* Quien haya pedido menos animación no recibe la transición, solo el cambio. */
+@media (prefers-reduced-motion: reduce) {
+  .app-data-list-busy {
+    transition: none;
+  }
+}

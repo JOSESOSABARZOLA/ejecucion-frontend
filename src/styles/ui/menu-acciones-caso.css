@@ -1,0 +1,68 @@
+/* ============================================================================
+   Menú de acciones por caso (⋮) — el trato con `menu-disabled` de daisyUI
+
+   Fase 03.19, Plan 21 (gap 5 del UAT, 2026-09-23). `MenuAccionesCaso` pone
+   `menu-disabled` en el `<li>` de una acción que no procede, porque es así —y
+   no por el atributo `disabled` del botón— como daisyUI atenúa una entrada de
+   menú. Es la convención que `RowActionMenu.tsx:48` ya sigue en este repo.
+
+   🔴 PERO ESA CLASE TRAE DOS COSAS EN LA MISMA DECLARACIÓN. En daisyUI 5.5.19
+   (`components/menu/object.js`, bajo `.menu` → `:where(li)`), `&.menu-disabled`
+   declara el gris —`color: color-mix(in oklab, var(--color-base-content) 20%,
+   transparent)`— Y `pointer-events: none`. Lo segundo mata el tooltip: el
+   motivo del apagado viaja en el `title` del `<li>`, que es el apaño declarado
+   en `MenuAccionesCaso.tsx:465-467` precisamente porque un `<button disabled>`
+   no recibe eventos de puntero y su propio `title` nunca llegaría a mostrarse.
+   Un `<li>` sin eventos de puntero tampoco muestra el suyo. Tomar el gris tal
+   cual habría arreglado el síntoma rompiendo el porqué.
+
+   Este fichero toma el gris y DEVUELVE EL PUNTERO.
+============================================================================ */
+
+/* El gancho es `[title]` y no la clase a secas: el `<li>` recibe `title` SOLO
+   cuando la acción está apagada Y trae motivo (`MenuAccionesCaso.tsx`, el `<li
+   role="none">` del menú). Así el puntero vuelve justo donde hay algo que leer
+   y se queda quieto donde no lo hay, que es el comportamiento de daisyUI y está
+   bien.
+
+   Devolverlo es SEGURO y no reabre ningún camino de clic: el menú se dibuja con
+   `createPortal`, así que el `<li>` no cuelga de la card y nada puede
+   propagarse hasta el `<summary>` de debajo —el defecto que este componente
+   lleva protegiendo con prueba desde 2026-08-21—; el `<button>` sigue
+   `disabled`, que en el navegador ni siquiera despacha el evento; y su
+   `onClick` conserva su guarda. En rigor esta regla RESTITUYE el hit-testing
+   que el componente tenía antes de recibir la clase: respecto de ese árbol, lo
+   único que cambia es el color.
+
+   ⚠️ NINGUNA DE ESTAS TRES REGLAS FUERZA SU DECLARACIÓN, Y NO LE HACE FALTA. El
+   CSS de este proyecto es NO ENCAPADO (cero `@layer` en `src/index.css` y en
+   todo `src/styles/`) y daisyUI se sirve dentro de una capa; en la cascada, lo
+   no-encapado gana a cualquier capa con independencia de la especificidad. Si
+   alguien mete este fichero en una capa, el arreglo se cae EN SILENCIO — y la
+   señal será que alguien tenga que forzar una declaración de aquí para que
+   vuelva a pintar. Hay una prueba en `MenuAccionesCaso.test.tsx` que vigila
+   justo eso, y el día que salte hay que leerla como «vuelve a medir la
+   cascada», no como «sube la fuerza».
+
+   ⚠️ Por eso mismo la palabra clave de forzado no aparece en este fichero NI
+   SIQUIERA EN UN COMENTARIO: la comprobación del plan es un `grep` sobre el
+   texto, y un comentario que la citara la dejaría sin filo. */
+.menu li.menu-disabled[title] {
+  pointer-events: auto;
+}
+
+/* Y estas dos declaraciones son OBLIGATORIAS, no adorno. daisyUI excluye del
+   resaltado de hover por `li:not(.menu-title, .disabled)` —por `.disabled`, NO
+   por `.menu-disabled`—, de modo que lo único que impedía que una entrada
+   apagada se iluminara y mostrara el cursor de «pulsable» al pasar por encima
+   era el `pointer-events: none` que acabamos de retirar. Sin ellas el arreglo
+   se contradiría a sí mismo: la entrada saldría gris y se comportaría como
+   pulsable, que es la mitad literal de lo que el usuario reportó. */
+.menu li.menu-disabled[title] > * {
+  cursor: not-allowed;
+}
+
+.menu li.menu-disabled[title] > *:hover {
+  background-color: transparent;
+  box-shadow: none;
+}

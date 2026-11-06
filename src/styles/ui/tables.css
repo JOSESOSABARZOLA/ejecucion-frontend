@@ -1,0 +1,681 @@
+/*
+ * Microservicio: ejecucion
+ * Módulo: ejecucion/tabla (frontend)
+ * Feature: Estilos de la tabla única del módulo (Fase 03.19, Plan 06, D-01)
+ * Archivo: tables.css
+ * Responsabilidad: Vestir `Table.tsx` y sus tres controles de filtro.
+ * Desarrollador: Johan Freire
+ * Fecha: 2026-06-19
+ * Modificado por: Andrés Miño — 2026-09-25 (Fase 03.20, Plan 02 — las tres clases de la fila
+ *   expandida entran: esta fase es su primer consumidor. Ver el bloque de abajo, que hasta este
+ *   commit decía lo contrario.)
+ * Modificado por: Andrés Miño — 2026-09-25 (Fase 03.22, Plan 08, gaps 3 y 4 del UAT: el realce al
+ *   pasar el ratón deja de tener canal alfa y las celdas fijas de los DOS lados dejan de
+ *   transparentarse; ver § El ratón sobre la fila, al final de los dos bloques de columna fija.)
+ * Modificado por: Andrés Miño — 2026-09-21 (Fase 03.19, Plan 06: FUSIÓN con el `tables.css` de
+ *   `resolucion-frontend @ origin/dev`. No es un «copiar encima»: la versión de Ejecución tenía
+ *   reglas propias —empezando por `--app-table-row-padding-y`, que la rama no tiene— y todas se
+ *   conservan. De la rama entran sólo las clases que el `Table.tsx` nuevo usa de verdad.)
+ *
+ * ── LO QUE NO SE PORTÓ EN LA 03.19, Y POR QUÉ YA SÍ ─────────────────────────────────────────
+ * `.app-table-expanded-despacho-row`, `.app-table-expanded-type-grid` y
+ * `.app-table-expanded-type-card` (con su `:hover` y su variante oscura) se dejaron FUERA a
+ * propósito en la Fase 03.19: no son del KIT de tabla —visten el CONTENIDO de la fila expandida de
+ * la bandeja de Resolución— y entonces aquí no había ninguna fila expandida que vestir. Traerlas
+ * habría sumado cuatro clases muertas al informe de `npm run audit:css`, que es exactamente la
+ * señal que ese informe sirve para dar.
+ *
+ * 🔴 Ese razonamiento era CORRECTO y sigue valiendo como criterio —una clase sin consumidor es una
+ * clase muerta—; lo que ha cambiado es el hecho. La **Fase 03.20 (2026-09-25)** monta el Gestor de
+ * Notificaciones, cuya fila expandida es su PRIMER consumidor: la tarjeta de forma la pinta su
+ * Plan 06 y el panel su Plan 07. Por eso las tres entran ahora, en esta misma ola y no antes.
+ *
+ * ⚠️ La rejilla entra **CONDICIONADA a 768px**, y no es una precaución sino una medición. El CSS
+ * propio de este proyecto no va envuelto en ninguna capa en cascada, y Tailwind 4 sí emite sus
+ * utilidades dentro de una: una hoja propia GANA a una utilidad, venga en el orden que venga.
+ * Declarar las tres columnas sin condición machacaría la utilidad de una sola columna por debajo
+ * de 768px, las tarjetas no se apilarían nunca y ninguna prueba en jsdom podría verlo.
+ *
+ * ── DE DÓNDE SALEN LOS COLORES ──────────────────────────────────────────────────────────────
+ * De los tokens de daisyUI ya declarados (`--color-base-*`, `--color-primary`, `--color-error`) y
+ * de `color-mix` sobre ellos. Esta fase introduce exactamente DOS valores de color nuevos y los
+ * crea el Plan 07 (`--app-plazo-fg`, `--app-plazo-fg-fuerte`), en `design-tokens.css`. Los únicos
+ * valores literales de este archivo son sombras —que ya existían en la versión heredada— y las dos
+ * de la columna fijada, que el UI-SPEC §1.6 declara textualmente.
+ */
+
+/* ── La rejilla de la tabla ─────────────────────────────────────────────────────────────────── */
+
+.app-data-table tbody td {
+  padding-top: var(--app-table-row-padding-y) !important;
+  padding-bottom: var(--app-table-row-padding-y) !important;
+}
+
+/* El `<thead>` de `Table.tsx` lleva además la clase `app-data-table-head`, que viene del porte.
+   NO se le escribe regla propia: la fijación vive en este selector de elemento, que alcanza a
+   TODAS las tablas del módulo —incluidas las que no son `Table.tsx`—, y duplicarla en una clase
+   crearía una segunda regla, más específica, que habría que mantener en dos sitios. La clase se
+   conserva en el marcado como asidero por si algún día hace falta distinguirlas. */
+.app-data-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* ── Las DOS filas de cabecera: la de títulos y la de filtros (C3 del porte) ────────────────── */
+
+.app-data-table-header-row th {
+  padding-top: 0.65rem;
+  padding-bottom: 0.45rem;
+  vertical-align: bottom;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-base-300) 70%, transparent);
+}
+
+/* `text-transform` y `letter-spacing` se devuelven a su valor normal a propósito: la fila de
+   títulos va en versalitas con `tracking`, y heredarlo aquí dejaría los cuadros de filtro en
+   MAYÚSCULAS ESPACIADAS. `overflow: visible` es lo que deja salir el panel del filtro de catálogo
+   por debajo de la celda. */
+.app-data-table-filter-row th {
+  padding-top: 0.35rem;
+  padding-bottom: 0.5rem;
+  vertical-align: middle;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+  border-bottom: 1px solid var(--color-base-300);
+  background-color: color-mix(
+    in srgb,
+    var(--color-base-200) 45%,
+    var(--color-base-100)
+  );
+  overflow: visible;
+}
+
+[data-theme="dark"] .app-data-table-filter-row th {
+  background-color: color-mix(
+    in srgb,
+    var(--color-base-200) 25%,
+    var(--color-base-100)
+  );
+}
+
+.app-data-table-filter-cell {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.app-data-table-filter-input {
+  height: 1.85rem;
+  border-radius: 0.85rem;
+  font-size: 0.96rem;
+  font-weight: 500;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+/* ── Filtro de RANGO DE FECHAS ──────────────────────────────────────────────────────────────── */
+
+.app-data-table-filter-date-range {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 9rem;
+}
+
+.app-data-table-filter-date-range .floating-label span {
+  font-size: 0.65rem;
+}
+
+/* El error de rango invertido. Lleva color destructivo Y texto: el mensaje no depende del color
+   (UI-SPEC §6/A1) y además va asociado a los dos campos con `aria-describedby`. */
+.app-data-table-filter-date-range-error {
+  font-size: 0.65rem;
+  line-height: 1rem;
+  color: var(--color-error);
+}
+
+/* ── Filtro de CATÁLOGO: disparador con aspecto de campo + panel desplegable ────────────────── */
+
+/* `position: relative` es lo que ancla el panel absoluto de abajo a ESTA celda y no a la tabla. */
+.app-data-table-filter-catalog {
+  position: relative;
+  width: 100%;
+  min-width: 7rem;
+}
+
+.app-data-table-filter-catalog-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-inline: 0.75rem;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.app-data-table-filter-catalog-trigger:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.app-data-table-filter-catalog-trigger-text {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El «seleccione» de cuando no hay nada elegido: atenuado y en peso normal, para que se lea como
+   marcador de posición y no como una opción ya puesta. */
+.app-data-table-filter-catalog-trigger-placeholder {
+  color: color-mix(in srgb, var(--color-base-content) 45%, transparent);
+  font-weight: 400;
+}
+
+/* `z-index: 30` queda por encima del `<thead>` fijo (10) porque el panel cuelga de la cabecera y
+   tiene que taparla; la columna de acciones fijada es 6 y también queda por debajo. */
+.app-data-table-filter-catalog-panel {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  width: max(100%, 9.5rem);
+  max-width: 14rem;
+  max-height: none;
+  overflow-x: hidden;
+  overflow-y: visible;
+  list-style: none;
+  margin: 0;
+}
+
+.app-data-table-filter-catalog-panel > li {
+  display: block;
+  width: 100%;
+}
+
+.app-data-table-filter-catalog-option {
+  width: 100%;
+  margin: 0;
+  white-space: normal;
+}
+
+/* Las etiquetas de estado son FRASES («En verificación de pago»), no palabras sueltas: se dejan
+   partir en varias líneas en vez de recortarlas con puntos suspensivos. */
+.app-data-table-filter-catalog-option span {
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* ── La barra de «filtros aplicados» (C1 del porte) ─────────────────────────────────────────── */
+
+.app-table-applied-filters-toolbar {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.app-table-applied-filters-panel {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.app-table-applied-filters-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+  min-width: 14rem;
+}
+
+.app-table-applied-filters-badges {
+  justify-content: center;
+}
+
+/* ── El contenedor de la tabla y la fila expandida ──────────────────────────────────────────── */
+
+/* Contenedor de consulta: es lo que le da a la fila expandida de abajo una anchura (`100cqw`) que
+   no depende de lo ancha que sea la tabla al hacer scroll horizontal. */
+.app-data-table-shell {
+  container-type: inline-size;
+  container-name: app-data-table-viewport;
+}
+
+/* La fila expandida se queda pegada a la izquierda mientras la tabla se desplaza: si no, su
+   contenido se iría de la pantalla al mover el scroll horizontal. `z-index: 5` la deja por DEBAJO
+   de la columna de acciones fijada (6) y del `<thead>` (10). */
+.app-table-expanded-cell {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  box-sizing: border-box;
+  width: 100cqw;
+  max-width: 100cqw;
+}
+
+.app-table-expanded-panel {
+  background-color: rgba(27, 119, 187, 0.04);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: background-color 180ms ease;
+}
+
+[data-theme="dark"] .app-table-expanded-panel {
+  background-color: rgba(72, 155, 215, 0.08);
+  box-shadow: inset 0 1px 0 rgba(143, 161, 255, 0.08);
+}
+
+.app-table-expanded-item {
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="dark"] .app-table-expanded-item {
+  box-shadow: 0 1px 3px rgba(2, 8, 24, 0.2);
+}
+
+/* ── EL CONTENIDO de la fila expandida (Fase 03.20, Plan 02) ────────────────────────────────── */
+
+/*
+ * Las tres clases que la Fase 03.19 dejó fuera por no tener consumidor. Vienen de
+ * `resolucion-frontend @ origin/dev` y su primer consumidor es el Gestor de Notificaciones: la
+ * tarjeta de forma (Plan 06) y el panel de la fila expandida (Plan 07). El porqué de que entren
+ * ahora y no antes está en la cabecera de este archivo.
+ */
+
+/* La fila de un despacho dentro de la tarjeta: chip, línea meta y botón, centrados entre sí. Es lo
+   único que la rama pone aquí. La consume la tarjeta del Plan 06. */
+.app-table-expanded-despacho-row {
+  align-items: center;
+}
+
+/* La tarjeta de una forma de notificación. `min-width: 0` es lo que hace que el recorte del título
+   funcione dentro de la rejilla —sin él, una dirección larga ensancha su columna y desalinea las
+   tres—; 180 ms es la duración canónica del módulo. La consume el Plan 06. */
+.app-table-expanded-type-card {
+  min-width: 0;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+/* El realce al pasar el ratón: el borde se tiñe del acento POR MEZCLA sobre el token, nunca con un
+   valor literal, y la sombra se queda suave. Viene de la rama tal cual. */
+.app-table-expanded-type-card:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+}
+
+/* En oscuro la sombra va más profunda, exactamente como hacen las dos reglas vecinas del panel y
+   del ítem de la fila expandida. */
+[data-theme="dark"] .app-table-expanded-type-card:hover {
+  box-shadow: 0 4px 14px rgba(2, 8, 24, 0.28);
+}
+
+/*
+ * 🔴 LA REJILLA VA DENTRO DE UNA CONSULTA DE MEDIOS, Y ES UNA DECISIÓN MEDIDA.
+ *
+ * `index.css` importa Tailwind 4, que emite sus utilidades envueltas en una capa en cascada; el
+ * CSS propio de este proyecto no va envuelto en ninguna, a propósito (está escrito en
+ * `menu-acciones-caso.css`). Una hoja propia GANA a una utilidad, venga en el orden que venga.
+ *
+ * La rejilla de la rama declara sus tres columnas SIN condición. Portada tal cual, machacaría la
+ * utilidad de una sola columna que el contrato de UI exige por debajo de 768px (§2.2: apilar en
+ * vez de partir), las tarjetas no se apilarían NUNCA y ninguna prueba en jsdom podría verlo —se
+ * descubriría a mano, en el UAT—. Condicionada, por encima de 768px coincide con la utilidad
+ * (mismo resultado) y por debajo no dice nada y manda la utilidad.
+ *
+ * Sólo se porta la regla de las tres columnas: el modo rejilla y el hueco los pone el marcado con
+ * sus utilidades (`grid grid-cols-1 md:grid-cols-3 gap-2`). La consume el panel del Plan 07.
+ */
+@media (min-width: 768px) {
+  .app-table-expanded-type-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ── La columna de ACCIONES fijada a la derecha (UI-SPEC §1.6) ──────────────────────────────── */
+
+/*
+ * 🔴 NO VIENE DE LA RAMA: `origin/dev` no fija ninguna columna. La captura de la que sale esta fase
+ * sí la enseña fijada, y con doce columnas la tabla no cabe en pantalla: sin esto, para pulsar
+ * «Ver» hay que desplazarse a la derecha y se pierde de vista de qué expediente se trata.
+ *
+ * La activa por columna `meta.pinnedRight` (ver `interfaces/ITableFilter.ts`); `Table.tsx` traduce
+ * ese interruptor a estas dos clases. Ninguna pantalla anterior a esta fase lo declara.
+ *
+ * 🔴 LA CELDA FIJA HEREDA DOS CAPAS DE FONDO, Y HACEN FALTA LAS DOS (corregido por el Plan 08).
+ * `background-color: inherit` es OBLIGATORIO y no es un detalle de acabado: el zebra
+ * (`bg-base-100`/`bg-base-200`) vive en el `<tr>`, no en la celda, y una celda fija SIN fondo propio
+ * es transparente —al desplazar la tabla en horizontal las demás columnas se ven pasar POR DEBAJO de
+ * los botones—. Heredándolo, la celda se pinta del color OPACO de su propia fila y tapa. 🔴 NO SE
+ * PUEDE QUITAR: es lo que la prueba 13 del UAT de la 03.22 aprobó a ojo en las cuatro combinaciones
+ * (par/impar × claro/oscuro).
+ * `background-image: inherit` lo añade el Plan 08 y es lo que trae el REALCE al pasar el ratón. El
+ * realce vivía en el `<tr>` como un color con canal alfa que SUSTITUÍA al zebra, así que la celda
+ * fija heredaba la transparencia y dejaba ver lo de detrás: el gap 3 del UAT. Ahora el color de
+ * fondo sigue siendo el opaco de la franja y el tinte entra aparte, como capa de imagen. El color le
+ * da a la celda la OPACIDAD; la imagen, el REALCE. Sin la segunda línea la celda fija sería opaca
+ * pero se quedaría apagada mientras el resto de la fila se realza. Ver § El ratón sobre la fila.
+ *
+ * ⚠️ `z-index: 6` está ELEGIDO, no puesto al azar: el `<thead>` fijo es 10 —la cabecera tiene que
+ * pasar por encima al desplazarse en vertical— y la fila expandida es 5, que tiene que quedar por
+ * debajo de los botones de acción.
+ */
+.app-data-table th.app-data-table-actions-col,
+.app-data-table td.app-data-table-actions-cell {
+  position: sticky;
+  right: 0;
+  z-index: 6;
+  background-color: inherit;
+  background-image: inherit;
+  box-shadow: -8px 0 12px -8px rgba(32, 52, 125, 0.18);
+}
+
+/* En tema oscuro la sombra del azul de marca no se ve: se sustituye por una casi negra, que es lo
+   único que separa la columna fija del contenido que pasa por detrás. */
+[data-theme="dark"] .app-data-table td.app-data-table-actions-cell,
+[data-theme="dark"] .app-data-table th.app-data-table-actions-col {
+  box-shadow: -8px 0 12px -8px rgba(2, 8, 24, 0.5);
+}
+
+/* ── La columna fijada a la IZQUIERDA (Fase 03.22, Plan 07 — gap 2 del UAT) ─────────────────── */
+
+/*
+ * Espejo del bloque de arriba, pedido literal del usuario: «podemos hacer que la columna del nro
+ * del expediente se mantenga estatica cuando se hace scroll horizontal? como la columna de las
+ * acciones». Con 17 columnas, desplazarse a la derecha para teclear una orden de pago hacía perder
+ * de vista de qué expediente era la fila. SUSTITUYE a la pregunta P2 del contrato de UI: no se
+ * reordena ninguna columna, y las dos de orden de pago se quedan tras el pliegue (D-06).
+ *
+ * La activa por columna `meta.pinnedLeft` (ver `interfaces/ITableFilter.ts`); `Table.tsx` traduce
+ * ese interruptor a estas tres clases. Ninguna pantalla anterior a esta fase lo declara.
+ *
+ * 🔴 EL BLOQUE FIJADO SON DOS COLUMNAS, y aquí está la asimetría con el de la derecha. La columna
+ * de numeración («Nro.») la antepone `Table.tsx` en su `numberColumn`, NO la página, así que va
+ * DELANTE de la que la página declara. Fijar sólo la declarada dejaría un hueco a la izquierda por
+ * donde se vería pasar el contenido desplazado —o la solaparía con la numeración—. Por eso la
+ * numeración lidera pegada al borde y la declarada va detrás, desplazada por su ancho.
+ *
+ * 🔴 `--app-data-table-nro-width` TIENE QUE SEGUIR VALIENDO LO MISMO QUE EL `size` DE
+ * `numberColumn` (60 en `Table.tsx`). Es UNA sola fuente para el ancho de la primera y el
+ * desplazamiento de la segunda: dos literales serían dos verdades que se separan al primer retoque.
+ * Si alguien cambia aquel `size`, tiene que cambiar esto.
+ *
+ * 🔴 LAS DOS CAPAS DE FONDO HEREDADAS, por la misma razón ya escrita arriba para la columna de la
+ * derecha (corregido por el Plan 08). `background-color: inherit` es OBLIGATORIO y no es un detalle
+ * de acabado: el zebra (`bg-base-100`/`bg-base-200`) vive en el `<tr>`, no en la celda, y una celda
+ * fija SIN fondo propio es transparente — al desplazar la tabla, las demás columnas se ven pasar POR
+ * DEBAJO del número de expediente, que sobre la columna del identificador significa leer el número
+ * de un expediente encima del de otro. Heredándolo, la celda se pinta del color OPACO de SU PROPIA
+ * fila y tapa; un color plano en su lugar cantaría en las filas impares. 🔴 NO SE PUEDE QUITAR: es
+ * lo que la prueba 13 del UAT aprobó a ojo en las cuatro combinaciones.
+ * `background-image: inherit` lo añade el Plan 08: es el REALCE al pasar el ratón, que ya no es un
+ * color con canal alfa que sustituya al zebra —así se transparentaba la celda: gap 3 del UAT— sino
+ * una capa que se pinta encima. El color da la opacidad, la imagen da el realce, y hacen falta las
+ * dos: sin la segunda, el ratón dejaría un hueco sin realzar en los dos extremos de la fila.
+ *
+ * ⚠️ `z-index: 6` es el mismo que la columna de la derecha y por la misma razón, ya escrita arriba
+ * en este archivo: la cabecera fija tiene que pasar por encima al desplazarse en vertical, el panel
+ * del filtro de catálogo por encima de todo, y la fila expandida por debajo. Los dos bloques fijos
+ * no se solapan a los anchos en juego; si la ventana se estrechara hasta que lo hicieran, pintaría
+ * el último en orden de fuente. Es el caso a mirar a 360 píxeles.
+ */
+.app-data-table {
+  --app-data-table-nro-width: 60px;
+}
+
+/* La numeración, LÍDER del bloque: sólo recibe esta clase cuando alguna columna de la página pide
+   fijarse a la izquierda, así que las demás tablas no cambian. */
+.app-data-table th.app-data-table-nro-col,
+.app-data-table td.app-data-table-nro-cell {
+  position: sticky;
+  left: 0;
+  z-index: 6;
+  background-color: inherit;
+  background-image: inherit;
+  width: var(--app-data-table-nro-width);
+  min-width: var(--app-data-table-nro-width);
+  max-width: var(--app-data-table-nro-width);
+}
+
+/* La columna que la página declara. La sombra es la de la derecha con el desplazamiento invertido
+   —cae hacia la derecha, que es por donde pasa el contenido—, con sus mismos dos colores. */
+.app-data-table th.app-data-table-pinned-col,
+.app-data-table td.app-data-table-pinned-cell {
+  position: sticky;
+  left: 0;
+  z-index: 6;
+  background-color: inherit;
+  background-image: inherit;
+  box-shadow: 8px 0 12px -8px rgba(32, 52, 125, 0.18);
+}
+
+[data-theme="dark"] .app-data-table th.app-data-table-pinned-col,
+[data-theme="dark"] .app-data-table td.app-data-table-pinned-cell {
+  box-shadow: 8px 0 12px -8px rgba(2, 8, 24, 0.5);
+}
+
+/* ⚠️ VA DESPUÉS DE LA REGLA BASE A PROPÓSITO: misma especificidad, gana la última escrita. Sólo se
+   aplica cuando la numeración va delante; si una pantalla la ocultara (`hideNumberColumn`), la
+   columna declarada sería la primera y le tocaría quedarse pegada al borde sin desplazamiento. */
+.app-data-table th.app-data-table-pinned-offset,
+.app-data-table td.app-data-table-pinned-offset {
+  left: var(--app-data-table-nro-width);
+}
+
+/* ── El ratón sobre la fila: el realce OPACO (Fase 03.22, Plan 08 — gap 3 del UAT) ──────────── */
+
+/*
+ * 🔴 DE DÓNDE VIENE. De la prueba 12 del UAT de la fase, dicho por el usuario: «cuando haces hover
+ * en una columna, se sobremonta el contenido de la columna que está debajo del nro de expediente y
+ * no se ve nada». NO era regresión del Plan 07: la columna de ACCIONES arrastraba exactamente el
+ * mismo defecto desde la Fase 03.19 —el Plan 07 sólo lo hizo visible también a la izquierda—. Por
+ * eso el arreglo es UNO para los DOS lados fijados, por decisión del usuario del 2026-09-25:
+ * arreglar sólo el lado nuevo dejaría dos celdas fijas comportándose distinto y nada que lo
+ * explicara.
+ *
+ * 🔴 POR QUÉ EL REALCE ES UNA CAPA DE IMAGEN Y NO UN COLOR. El realce vivía en el `<tr>` de
+ * `Table.tsx` como un utilitario del color de marca al 5 %, es decir CON canal alfa, y SUSTITUÍA al
+ * color de fondo de la fila. Las celdas fijas copian ese fondo (`background-color: inherit`), así
+ * que al pasar el ratón se volvían translúcidas y dejaban ver el contenido que se desplazaba por
+ * detrás. El fondo de la fila TIENE que seguir siendo el opaco de su franja; el tinte entra aparte,
+ * como `background-image`, que se pinta ENCIMA del color en la misma caja. Sobre una base opaca, el
+ * resultado es opaco.
+ *
+ * 🔴 POR QUÉ EL `color-mix` NO LLEVA UNA BASE FIJA. Porque LA PARIDAD SÓLO LA SABE REACT. El zebra
+ * lo decide `Table.tsx` con el índice de fila, y el CSS no puede recalcularlo: `:nth-child` sobre
+ * `<tbody>` MIENTE en cuanto se despliega una fila expandida, que es otro `<tr>` del mismo `<tbody>`
+ * y desplaza la paridad de todas las de abajo. Un tinte mezclado contra `base-100` saldría mal en la
+ * franja alterna y al revés. Mezclándolo con `transparent` y dejando que se componga sobre el color
+ * que la fila YA tiene, sale bien en las dos franjas y en los dos temas con UN solo literal.
+ *
+ * ⚠️ POR QUÉ EL GANCHO ES UNA CLASE Y NO `tbody tr`. La fila expandida es otro `<tr>` del mismo
+ * `<tbody>` y hoy no se realza — y no debe empezar a hacerlo. `app-data-table-row` la pone sólo la
+ * fila de DATOS.
+ *
+ * ⚠️ CAMBIO VISUAL DELIBERADO, para que el UAT no lo lea como defecto: antes, al pasar el ratón por
+ * una fila IMPAR, el 5 % se componía sobre el fondo del panel y la franja se PERDÍA; ahora se
+ * compone sobre el tono alterno de su propia fila y la franja SE CONSERVA. Es la corrección: es la
+ * única forma de que la celda fija case con su fila.
+ */
+.app-data-table tr.app-data-table-row:hover {
+  --app-data-table-row-hover-tint: color-mix(
+    in srgb,
+    var(--color-primary) 5%,
+    transparent
+  );
+  background-image: linear-gradient(
+    var(--app-data-table-row-hover-tint),
+    var(--app-data-table-row-hover-tint)
+  );
+}
+
+/* ── La fila activa gana el empate de capas (Fase 03.22, Plan 08 — gap 4 del UAT) ───────────── */
+
+/*
+ * 🔴 QUÉ ARREGLA. El gap 4, dicho por el usuario en la prueba 12: «también hay un bug con el
+ * tooltip, no se sobrepone a la columna y se muestra detrás». El mecanismo está LEÍDO, no supuesto,
+ * en el CSS compilado de daisyUI 5.5.18 (`node_modules/daisyui/components/tooltip.css`): el
+ * envoltorio `.tooltip` declara `display: inline-block; position: relative` y NO declara capa, así
+ * que NO crea contexto de apilamiento; la burbuja es el pseudo-elemento `[data-tip]:before`,
+ * `position: absolute`, con una capa propia que se resuelve dentro del contexto de apilamiento más
+ * cercano — que es su `<td>` fijo, `position: sticky` con capa 6. Ese `<td>` compite como un bloque
+ * en la capa 6 contra las celdas fijas de TODAS las demás filas, que también están en la 6, y en un
+ * empate manda el orden del documento: la fila de abajo viene después y tapa. Subir la fila ACTIVA
+ * rompe el empate.
+ *
+ * 🔴 POR QUÉ 7 Y NO OTRO NÚMERO. Es la primera capa libre por encima de la de las celdas fijas (6),
+ * y sigue por DEBAJO de la de la cabecera fija (10) y de la del panel del filtro de catálogo (30).
+ * La prueba 13 del UAT aprobó a ojo que esas dos pasan por encima del bloque fijo, y tiene que
+ * seguir siendo cierto: un arreglo que suba más cambiaría un defecto menor por uno mayor —controles
+ * inalcanzables—. La fila expandida (5) sigue por debajo.
+ *
+ * 🔴 POR QUÉ `:has(:focus-visible)` Y NO `:focus-within`. Porque daisyUI revela la burbuja
+ * exactamente con `&.tooltip-open, &:hover, &:has(:focus-visible)`: nunca con `:focus-within`, que
+ * es un superconjunto y dispara también con el foco de RATÓN. Con `:focus-within`, pulsar el campo
+ * de registrar la orden de pago —que vive en una columna NO fijada de la misma fila— levantaría la
+ * fila a la capa 7 sin ninguna burbuja que rescatar. Emparejar el selector con el de daisyUI hace
+ * que la capa suba exactamente cuando hay algo que subir, y cubre el teclado además del ratón.
+ * `:has()` ya lo usa daisyUI en este mismo árbol: no se introduce ningún soporte nuevo.
+ *
+ * ⚠️ ES EL ARREGLO COMPARTIDO: las TRES clases de celda fija —la numeración, la columna declarada y
+ * ACCIONES— en una sola regla, por la decisión del usuario del 2026-09-25. Y el gancho vuelve a ser
+ * la clase de la fila de DATOS, por la misma razón que arriba: la fila expandida no entra.
+ *
+ * ⚠️ LO QUE ESTA REGLA NO PUEDE ARREGLAR, y por eso no viene sola: el RECORTE. El contenedor de la
+ * tabla lleva los dos `overflow` y alto fijo, así que una burbuja que cruza el borde del recuadro se
+ * corta, y ninguna capa lo evita. Eso se arregla en el otro sitio —la dirección de la burbuja, en
+ * `MisAsignadosPage.tsx`— para que deje de salir de la banda de su propia fila.
+ */
+.app-data-table tbody tr.app-data-table-row:hover > td.app-data-table-nro-cell,
+.app-data-table tbody tr.app-data-table-row:hover > td.app-data-table-pinned-cell,
+.app-data-table
+  tbody
+  tr.app-data-table-row:hover
+  > td.app-data-table-actions-cell,
+.app-data-table
+  tbody
+  tr.app-data-table-row:has(:focus-visible)
+  > td.app-data-table-nro-cell,
+.app-data-table
+  tbody
+  tr.app-data-table-row:has(:focus-visible)
+  > td.app-data-table-pinned-cell,
+.app-data-table
+  tbody
+  tr.app-data-table-row:has(:focus-visible)
+  > td.app-data-table-actions-cell {
+  z-index: 7;
+}
+
+/* ── El `<select>` múltiple de los modales (propio de Ejecución, no viene de la tabla) ──────── */
+
+.app-multiselect {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  padding: 0.25rem;
+  border: 0;
+  background-color: transparent;
+  color: var(--color-base-content);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.app-multiselect:focus {
+  outline: none;
+}
+
+.app-multiselect:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.app-multiselect option {
+  padding: 0.45rem 0.55rem;
+  margin-bottom: 0.125rem;
+  border-radius: 0.55rem;
+  white-space: normal;
+  word-break: break-all;
+}
+
+.app-multiselect option:checked {
+  background: linear-gradient(
+    0deg,
+    var(--color-primary) 0%,
+    var(--color-primary) 100%
+  );
+  color: var(--color-primary-content);
+}
+
+.app-multiselect-field {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--color-base-300);
+  border-radius: 0.85rem;
+  background-color: var(--color-base-100);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.app-multiselect-field:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 18%, transparent);
+}
+
+.app-multiselect-hint {
+  margin-top: 0.25rem;
+  font-size: 0.65rem;
+  line-height: 1rem;
+  color: color-mix(in srgb, var(--color-base-content) 55%, transparent);
+}
+
+/* ── El paginado (propio de Ejecución: reunión del 2026-09-16, punto 1) ─────────────────────── */
+
+.app-table-pagination-shell {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.app-table-pagination-inner {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-width: 100%;
+  padding-block: 1rem;
+  padding-inline: 0.25rem;
+  box-sizing: border-box;
+}
+
+.app-table-pagination-meta {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.app-table-footer {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}

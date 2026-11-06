@@ -1,0 +1,44 @@
+services:
+  frontend:
+    image: ejecucion-frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # Backend URL - nginx proxy handles /api/* routing to ejecucion-app:3000
+        # Frontend uses /api as base URL, nginx rewrites to backend service
+        VITE_API_BASE_URL: /api
+      # Token de GitHub Packages para bajar @amc-automatizacion/ui: secreto de BuildKit, no build-arg
+      # (ver Dockerfile). Se toma de NODE_AUTH_TOKEN al construir y no se escribe aquí.
+      secrets:
+        - npmtoken
+    restart: always
+    ports:
+      # Host 5177 -> 5173 en el contenedor (nginx escucha en 5173). Puerto propio de
+      # Ejecucion (SERVIDOR.md), separado de sorteo-frontend (host 5174) y del resto.
+      - "5177:5173"
+    container_name: ejecucion-frontend
+    networks:
+      - ejecucion-network
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:5173/",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  ejecucion-network:
+    external: true
+
+secrets:
+  # Origen del secreto de build: la variable NODE_AUTH_TOKEN de la terminal que construye.
+  npmtoken:
+    environment: NODE_AUTH_TOKEN

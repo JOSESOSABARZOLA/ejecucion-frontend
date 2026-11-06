@@ -1,0 +1,503 @@
+/* ============================================================================
+   Inbox Cases Page Styles
+   ============================================================================
+   Specific styles for InboxCasesPage that extend the generic collapse-list.css
+   Uses generic base classes (.app-collapse-item-*) with specific variations
+============================================================================ */
+
+/* ============================================================================
+   Alert Item Wrapper - Alternating Row Colors
+   ----------------------------------------------------------------------------
+   Dos formas de fila en las bandejas:
+
+     (a) .app-inbox-alert-item  → el <details> ES la fila (hijo directo de .app-data-list).
+                                  Cards sin selección: avisos, memorandos, asignados.
+
+     (b) .app-inbox-alert-row   → la fila envuelve [checkbox] + [<details> .app-inbox-alert-card].
+                                  Cards CON selección (bandejas de EPAS: expediente y caso). El
+                                  checkbox no puede vivir dentro del <summary> — un click ahí
+                                  desplegaría la card — así que se saca a un gutter y la card queda
+                                  anidada. Por eso la PARIDAD del zebra la marca la FILA: es ella la
+                                  que ocupa la posición nth-child dentro de .app-data-list.
+
+   El zebra de (b) usa el combinador hijo (>) para no filtrarse: un expediente contiene otra
+   .app-data-list con las filas de sus CASOS, y con un selector de descendencia la paridad del
+   expediente teñiría también las cards de sus casos.
+============================================================================ */
+
+.app-inbox-alert-item,
+.app-inbox-alert-card {
+  border-radius: 0.625rem;
+  overflow: hidden;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+/* Light theme - Alternating backgrounds */
+[data-theme="light"]
+  .app-inbox-alert-item:nth-child(odd)
+  .app-collapse-alert-summary,
+[data-theme="light"]
+  .app-inbox-alert-row:nth-child(odd)
+  > .app-inbox-alert-card
+  > .app-collapse-alert-summary {
+  background-color: #ffffff;
+}
+
+[data-theme="light"]
+  .app-inbox-alert-item:nth-child(even)
+  .app-collapse-alert-summary,
+[data-theme="light"]
+  .app-inbox-alert-row:nth-child(even)
+  > .app-inbox-alert-card
+  > .app-collapse-alert-summary {
+  background-color: #f1f3f6;
+}
+
+/* Dark theme - Alternating backgrounds */
+[data-theme="dark"]
+  .app-inbox-alert-item:nth-child(odd)
+  .app-collapse-alert-summary,
+[data-theme="dark"]
+  .app-inbox-alert-row:nth-child(odd)
+  > .app-inbox-alert-card
+  > .app-collapse-alert-summary {
+  background-color: #101e49;
+}
+
+[data-theme="dark"]
+  .app-inbox-alert-item:nth-child(even)
+  .app-collapse-alert-summary,
+[data-theme="dark"]
+  .app-inbox-alert-row:nth-child(even)
+  > .app-inbox-alert-card
+  > .app-collapse-alert-summary {
+  background-color: #11224f;
+}
+
+.app-inbox-document-header-left {
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+.app-inbox-document-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.app-inbox-document-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.app-inbox-document-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.app-inbox-document-type,
+.app-inbox-document-date,
+.app-inbox-document-count {
+  display: inline-block;
+}
+
+/* .app-inbox-document-type {
+  background-color: var(--b2, oklch(var(--b2)));
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+} */
+
+/* ============================================================================
+   Document Selection Info
+============================================================================ */
+
+.app-inbox-document-selected {
+  font-size: 0.75rem;
+  font-weight: 600;
+  opacity: 0.8;
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+/* ============================================================================
+   Cases List (Body Content)
+============================================================================ */
+
+.app-inbox-cases-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--bc, oklch(var(--bc) / 0.1));
+}
+
+.app-inbox-select-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--bc, oklch(var(--bc)));
+  transition: opacity 180ms ease;
+}
+
+.app-inbox-select-all-btn:hover {
+  opacity: 0.8;
+}
+
+.app-inbox-checkbox {
+  cursor: pointer;
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--primary, oklch(var(--primary)));
+}
+
+.app-inbox-cases-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Sin fondo propio: hereda el fondo theme-aware de .app-collapse-alert-content.
+     Antes tenía 'white' hardcodeado, que rompía el modo oscuro al expandir. */
+  background-color: transparent;
+}
+
+/* ============================================================================
+   Item List primitive (app-item-list-*)
+   ----------------------------------------------------------------------------
+   Alineado al look de la Bandeja de Entrada de Resolución. Reemplaza el markup
+   previo .app-inbox-case-* en las filas de casos del buzón (Entrada y Salida,
+   ambas cuelgan de CollapseInboxDocument). El theming light/dark se logra vía
+   tokens daisyUI (--primary, --bc, --b2) — misma convención que las clases
+   hermanas .app-inbox-case-*, sin pares [data-theme] redundantes.
+============================================================================ */
+
+.app-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: transparent;
+}
+
+.app-item-list-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.app-item-list-row:hover {
+  background-color: var(--b2, oklch(var(--b2)));
+  border-color: var(--bc, oklch(var(--bc) / 0.5));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.app-item-list-index {
+  flex-shrink: 0;
+  min-width: 1.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  opacity: 0.6;
+}
+
+/* Bloque identificador (nº de caso + fecha), apilado */
+.app-item-list-primary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 6rem;
+  flex-shrink: 0;
+}
+
+.app-item-list-identifying {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--primary, oklch(var(--primary)));
+}
+
+.app-item-list-complementary {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+/* Datos del administrado + estado, en línea */
+.app-item-list-secondary {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem 2rem;
+  flex: 1;
+  min-width: 0;
+  font-size: 0.8125rem;
+}
+
+/* Énfasis alto: identidad principal (nombre) */
+.app-item-list-info--alta {
+  font-weight: 600;
+  color: var(--bc, oklch(var(--bc)));
+}
+
+/* Énfasis bajo: datos secundarios (cédula, zona) */
+.app-item-list-info--baja {
+  opacity: 0.7;
+  font-size: 0.75rem;
+}
+
+/* Énfasis medio: estado (chip). El bloque secondary se alinea a la derecha (justify-content:
+   flex-end), así que el chip NO necesita margin-left:auto — todos los datos van juntos a la derecha. */
+.app-item-list-info--media {
+  margin-left: 0;
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  background-color: var(--b2, oklch(var(--b2)));
+  color: var(--bc, oklch(var(--bc)));
+}
+
+.app-item-list-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+/* Sin botones por-item → no reservar espacio */
+.app-item-list-actions:empty {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .app-item-list-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .app-item-list-secondary {
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .app-item-list-info--media {
+    margin-left: 0;
+  }
+}
+
+/* LA FILA SE ACOMODA A SU ANCHO, NO AL DE LA PANTALLA (2026-11-06). Con el menú lateral desplegado
+   la lista pierde ~250 px aunque la ventana siga siendo ancha, y la media query de arriba no se
+   entera: los datos, con 2rem de hueco y alineados a la derecha, acababan uno por renglón en una
+   columna alta y desordenada. Con la lista estrecha, la fila se parte en dos pisos: arriba el
+   número de expediente y las acciones; debajo, a todo el ancho y alineados a la izquierda, los
+   datos con huecos cortos. Las observaciones del modal tienen su propio diseño y quedan fuera. */
+.app-item-list:not(.app-item-list--observations) {
+  container-type: inline-size;
+  container-name: app-item-list;
+}
+
+@container app-item-list (max-width: 72rem) {
+  .app-item-list-row {
+    flex-wrap: wrap;
+    align-items: center;
+    row-gap: 0.5rem;
+  }
+
+  .app-item-list-actions {
+    margin-left: auto;
+  }
+
+  .app-item-list-secondary {
+    order: 1;
+    flex-basis: 100%;
+    justify-content: flex-start;
+    gap: 0.375rem 1.25rem;
+    padding-left: 2.5rem;
+  }
+}
+
+/* ============================================================================
+   Individual Case Item
+============================================================================ */
+
+.app-inbox-case-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.5rem 0.75rem;
+  /* border-radius: 0.5rem; */
+  /* border: 1px solid var(--bc, oklch(var(--bc) / 0.3)); */
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.app-inbox-case-item:hover {
+  background-color: var(--b2, oklch(var(--b2)));
+  border-color: var(
+    --bc,
+    oklch(var(--bc) / 0.5)
+  ); /* ← Cambiar borde en hover */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* ← Agregar sombra para mayor efecto visual */
+}
+
+.app-inbox-case-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 1.5rem;
+  margin-top: 0.125rem;
+}
+
+.app-inbox-case-info {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.1rem;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.app-inbox-case-number {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--primary, oklch(var(--primary)));
+  /* white-space: nowrap; */
+  grid-column: 1;
+}
+
+.app-inbox-case-details {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  font-size: 0.8125rem;
+  grid-column: 2;
+}
+
+.app-inbox-case-administrado {
+  font-weight: 600;
+  color: var(--bc, oklch(var(--bc)));
+}
+
+.app-inbox-case-identification,
+.app-inbox-case-zone {
+  opacity: 0.7;
+  font-size: 0.75rem;
+}
+
+.app-inbox-case-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  grid-column: 3;
+  grid-row: 1 / -1;
+  justify-self: end;
+}
+
+.app-inbox-case-status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.25rem;
+  background-color: var(--b2, oklch(var(--b2)));
+  color: var(--bc, oklch(var(--bc)));
+}
+
+.app-inbox-case-created {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  white-space: nowrap;
+  grid-column: 1 / -1;
+}
+
+/* ============================================================================
+   Responsive Design
+============================================================================ */
+
+@media (max-width: 768px) {
+  .app-inbox-document-info {
+    gap: 0.25rem;
+  }
+
+  .app-inbox-document-name {
+    font-size: 0.8125rem;
+  }
+
+  .app-inbox-document-meta {
+    gap: 0.5rem;
+  }
+
+  .app-inbox-case-info {
+    gap: 0.75rem;
+    grid-template-columns: 1fr;
+  }
+
+  .app-inbox-case-status {
+    grid-column: 1;
+    justify-self: start;
+    margin-top: 0.5rem;
+  }
+
+  .app-inbox-case-created {
+    grid-column: 1;
+    margin-top: 0.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-inbox-case-item {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .app-inbox-document-header-left {
+    gap: 0.25rem;
+  }
+
+  .app-inbox-document-name {
+    font-size: 0.75rem;
+  }
+
+  .app-inbox-document-meta {
+    font-size: 0.7rem;
+  }
+
+  .app-inbox-document-type {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.65rem;
+  }
+
+  .app-inbox-case-details {
+    gap: 0.15rem;
+    font-size: 0.75rem;
+  }
+
+  .app-inbox-case-details span {
+    font-size: 0.7rem;
+  }
+}

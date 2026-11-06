@@ -1,0 +1,180 @@
+/*
+ * Microservicio: ejecucion
+ * Módulo: ejecucion/estilos (frontend)
+ * Archivo: administration-docs-generate-page.css
+ * Responsabilidad: Lo que la PÁGINA de generación de documentos necesita y el stepper del modal no
+ *   tiene: la variante que pone el rótulo DEBAJO del punto, sus dos estados pulsables, el panel que
+ *   los envuelve y la regla que oculta un paso sin desmontarlo.
+ *
+ *   ── DE DÓNDE SALE, Y QUÉ SE DEJÓ FUERA ──────────────────────────────────────────────────────
+ *   Extracto de `resolucion-frontend @ origin/dev` —
+ *   `src/styles/administration/administration-docs-generate-dynamic.css`, **1.413 líneas**. De ahí
+ *   se han traído SOLO los bloques que esta página usa:
+ *     · `app-modules-stepper--page` y `app-modules-step--page` (la variante vertical);
+ *     · `app-modules-step--clickable` / `--disabled` (los dos estados del punto pulsable);
+ *     · `app-modules-step-line--page` (la línea entre pasos, alineada a los puntos);
+ *     · `app-modules-docs-generate-page-stepper-panel` (la tira que los contiene);
+ *     · `app-modules-docs-page-step-hidden` (ocultar un paso SIN desmontarlo).
+ *
+ *   NO entra nada más. Lo que quedó fuera —y el porqué—: el CSS del formulario de Resolución y sus
+ *   campos, el de su barra de acciones en la cabecera, el de su panel de vista previa y el de su
+ *   sección de documentos similares. Ninguno describe una pieza que exista aquí: el compositor de
+ *   Ejecución tiene sus propios campos, la barra va al pie con utilidades, y el `<aside>` del
+ *   borrador ya existe desde la Fase 03.14. Copiar mil líneas «por si acaso» habría dejado en el
+ *   módulo un archivo que nadie sabe leer y que `npm run audit:css` denunciaría clase a clase.
+ *
+ *   ── 🔴 CERO COLORES NUEVOS ──────────────────────────────────────────────────────────────────
+ *   El original está escrito en `rgba(...)` literales, uno por tema. Aquí cada uno se ha traducido
+ *   al token que ya declara ese mismo color:
+ *     rgba(90,109,153,.16) / rgba(148,163,184,.22)  →  var(--app-shell-surface-border)
+ *     los dos degradados del panel, claro y oscuro  →  var(--color-base-100) → var(--color-base-200)
+ *     las dos sombras del panel                     →  var(--app-shell-surface-shadow)
+ *     rgba(27,119,187,.45) del anillo de foco       →  color-mix sobre var(--color-primary)
+ *   Por eso aquí NO hay un bloque `[data-theme="dark"]`: los tokens ya cambian solos, y un segundo
+ *   bloque sería un sitio más donde olvidarse de cambiar el color. La Fase 03.19 introduce
+ *   exactamente DOS valores de color nuevos —los del plazo restante, que crea el plan 07 en
+ *   `design-tokens.css`—; si aquí apareciera un tercer hex, sería CSS de la rama sin traducir.
+ *
+ *   ── EL CSS BASE NO SE TOCA ──────────────────────────────────────────────────────────────────
+ *   `app-modules-stepper`, `app-modules-step`, `-dot`, `-label`, `-line` y los tres estados
+ *   (`is-active` / `is-complete` / `is-pending`, con sus dos temas) YA EXISTEN en
+ *   `administration-modal-shared.css` y en `administration-theme-{light,dark}.css`. Este archivo
+ *   solo añade modificadores: si algún día el stepper del modal cambia de aspecto, el de la página
+ *   cambia con él, que es lo que se quiere.
+ * Desarrollador: Andrés Miño
+ * Fecha: 2026-09-21
+ */
+
+/* ── El paso oculto ───────────────────────────────────────────────────────────────────────────
+ * 🔴 Ocultar, NO desmontar (UI-SPEC §4.2). Un paso desmontado pierde lo redactado en cuanto el
+ * decisor vuelve atrás a corregir una fecha, y lo pierde en silencio. `!important` porque el
+ * contenedor del paso trae sus propias utilidades de disposición (`flex`), y la que gana tiene que
+ * ser esta.
+ */
+.app-modules-docs-page-step-hidden {
+  display: none !important;
+}
+
+/* ── El stepper en variante de página: rótulo DEBAJO del punto ────────────────────────────────
+ * En el modal el stepper es una tira horizontal apretada y el rótulo va al lado. En una página hay
+ * sitio, y los cuatro rótulos son largos («Edición del Documento»): debajo del punto caben enteros
+ * y el stepper se lee como un camino, no como una lista.
+ */
+.app-modules-stepper--page {
+  justify-content: center;
+  gap: 0;
+  padding: 0.25rem 0 0.5rem;
+  flex-shrink: 0;
+}
+
+.app-modules-step--page {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 5.5rem;
+  padding: 0.25rem 0.5rem;
+  /* El paso de la página es un `<button>` de verdad —se pulsa para volver atrás—, así que hay que
+     quitarle el cromado que el navegador le pone. */
+  border: none;
+  background: transparent;
+  text-align: center;
+}
+
+.app-modules-step--page .app-modules-step-label {
+  max-width: 7.5rem;
+  line-height: 1.25;
+  letter-spacing: 0.06em;
+  /* Sin versalitas: en el modal el rótulo es una palabra, aquí son tres y en mayúsculas se leen
+     peor y ocupan dos líneas más. */
+  text-transform: none;
+  font-size: 0.7rem;
+}
+
+.app-modules-step-line--page {
+  align-self: flex-start;
+  width: 2.5rem;
+  /* A la altura del centro del punto (2rem de alto), no del bloque entero: con el rótulo debajo,
+     centrar respecto del bloque dejaría la línea flotando sobre el texto. */
+  margin-top: 1rem;
+  flex-shrink: 0;
+}
+
+/* ── Los dos estados del punto pulsable ───────────────────────────────────────────────────────
+ * `--clickable` es un paso ya alcanzado: se puede volver a él, y el cursor lo dice.
+ * `--disabled` es un paso que todavía no se ha ganado: se ve, se apaga, y el componente le pone
+ * además el motivo en `title` y en un texto asociado (UI-SPEC §6/A9). El CSS no puede decir «qué
+ * falta»; lo único que le toca es no esconderlo.
+ */
+.app-modules-step--clickable {
+  cursor: pointer;
+  border-radius: 0.65rem;
+  transition:
+    background-color 180ms ease,
+    transform 180ms ease;
+}
+
+.app-modules-step--clickable:hover .app-modules-step-dot,
+.app-modules-step--clickable:focus-visible .app-modules-step-dot {
+  transform: scale(1.05);
+}
+
+/* Anillo de foco visible en todo control (UI-SPEC §6/A10). `outline`, no `box-shadow`: el punto ya
+   usa su sombra para los estados del paso. */
+.app-modules-step--clickable:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.app-modules-step--disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.app-modules-step--disabled:hover .app-modules-step-dot,
+.app-modules-step--disabled:focus-visible .app-modules-step-dot {
+  transform: none;
+}
+
+/* ── La tira que envuelve el stepper ──────────────────────────────────────────────────────────*/
+.app-modules-docs-generate-page-stepper-panel {
+  flex-shrink: 0;
+  padding: 0.85rem 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid var(--app-shell-surface-border);
+  background: linear-gradient(
+    145deg,
+    var(--color-base-100) 0%,
+    var(--color-base-200) 100%
+  );
+  box-shadow: var(--app-shell-surface-shadow);
+}
+
+/* ── Pantallas estrechas ──────────────────────────────────────────────────────────────────────
+ * 🔴 CORRECCIÓN respecto del original, y de `administration-modal-shared.css`. Por debajo de 640px
+ * el CSS compartido esconde TODOS los rótulos del stepper (`display: none`). Para el del modal es
+ * razonable: allí van al lado del punto y no caben. Para el de la página no lo es —el rótulo va
+ * DEBAJO, y sin él quedan cuatro círculos numerados sin nombre, que no dicen nada a nadie y, en
+ * particular, dejan sin sentido el paso apagado que tiene que «decir qué falta»—. Aquí se devuelve,
+ * encogido. La regla va anclada al modificador `--page`, así que el stepper del modal no cambia.
+ */
+@media (max-width: 640px) {
+  .app-modules-stepper--page {
+    gap: 0;
+  }
+
+  .app-modules-step--page {
+    min-width: 4rem;
+    padding: 0.25rem 0.25rem;
+  }
+
+  .app-modules-step--page .app-modules-step-label {
+    display: block;
+    max-width: 4.5rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.02em;
+  }
+
+  .app-modules-step-line--page {
+    width: 1rem;
+  }
+}

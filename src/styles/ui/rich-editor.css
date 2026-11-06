@@ -1,0 +1,208 @@
+/**
+ * Microservicio: ejecucion
+ * Módulo: ejecucion/providencias (frontend)
+ * Feature: Composición de providencias (Fase 03.14, Plan 06)
+ * Archivo: rich-editor.css
+ * Responsabilidad: Estilos del editor de secciones y de los badges de tokens.
+ *
+ *   Portado del kit de Resolución, pero con los COLORES tomados de las variables de daisyUI
+ *   (`--color-base-*`, `--color-primary`) en vez de literales: allí las reglas dejaban los bordes en
+ *   `transparent` y el color lo ponía otro archivo del tema; aquí se resuelven solos en claro y en
+ *   oscuro, que es el criterio del resto de la aplicación.
+ *
+ * Modificado por: Andrés Miño — 2026-09-17 (quick 260917-bqt: la barra pasa de 7 a 13 controles y
+ *   estrena estado deshabilitado; y los encabezados, la cita y la raya reciben estilo propio, que el
+ *   `preflight` de Tailwind les había dejado en blanco)
+ */
+
+.app-rich-editor {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-base-300);
+  border-radius: 0.75rem;
+  background-color: var(--color-base-100);
+}
+
+.app-rich-editor-loading {
+  min-height: 8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* `flex-wrap`: la barra pasó de 7 controles a 13 el 2026-09-17. En el ancho del modal de excusa
+   siguen entrando, pero sin envolver, el día que no entren se saldrían del recuadro en vez de bajar
+   de línea, y el decisor perdería controles sin saber que existen. */
+.app-rich-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.55rem;
+  border-bottom: 1px solid var(--color-base-300);
+  background-color: var(--color-base-200);
+}
+
+.app-rich-editor-sep {
+  width: 1px;
+  height: 1.25rem;
+  margin: 0 0.15rem;
+  background-color: var(--color-base-300);
+}
+
+.app-rich-editor-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  border: 1px solid transparent;
+  border-radius: 0.45rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+}
+
+.app-rich-editor-btn:hover {
+  background-color: var(--color-base-300);
+}
+
+.app-rich-editor-btn.is-active {
+  font-weight: 700;
+  color: var(--color-primary-content);
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Deshacer y rehacer se apagan cuando no hay historial. Sin esta regla el botón seguiría pareciendo
+   pulsable —el `:hover` incluso respondería— y no haría nada al pulsarlo. */
+.app-rich-editor-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.app-rich-editor-btn:disabled:hover {
+  background-color: transparent;
+}
+
+.app-rich-editor-underline {
+  text-decoration: underline;
+}
+
+.app-rich-editor-content {
+  min-height: 9rem;
+  max-height: 22rem;
+  overflow-y: auto;
+  padding: 0.85rem 1rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  outline: none;
+}
+
+.app-rich-editor-content p {
+  margin: 0 0 0.65rem;
+}
+
+/* ── Lo que se ve aquí es lo que sale impreso ──────────────────────────────────────────────────────
+   El `preflight` de Tailwind deja los encabezados, la cita y la raya SIN estilo propio: sin estas
+   reglas, marcar un título no cambiaría nada en pantalla, la cita no se vería sangrada y el `<hr>`
+   sería literalmente invisible (el reset pone `border-width: 0`). El decisor estaría marcando a
+   ciegas, que es la misma trampa que este encargo vino a cerrar, solo que del revés. */
+
+/* 🔴 LOS TRES NIVELES SE VEN IGUAL A PROPÓSITO, y no es un descuido de CSS: el backend mapea h1–h6
+   al MISMO estilo `titulo1` (negrita, 12pt sobre un cuerpo de 10pt) en `providencia-numeracion.ts`
+   y en `escrito-excusa.report.ts`. En el PDF no hay jerarquía de títulos, hay UN título. Pintar aquí
+   tres tamaños distintos sería prometer en pantalla una jerarquía que el documento firmado no tiene.
+   Queda ANOTADO como lo siguiente a decidir: o el PDF gana niveles de verdad, o la barra deja de
+   ofrecer tres. Mientras tanto, la pantalla dice la verdad. */
+.app-rich-editor-content h1,
+.app-rich-editor-content h2,
+.app-rich-editor-content h3,
+.app-rich-editor-content h4,
+.app-rich-editor-content h5,
+.app-rich-editor-content h6 {
+  margin: 0 0 0.65rem;
+  font-size: 1.2em;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* La cita se sangra y NADA MÁS: el conversor le aplica `margin: [20, 0, 0, 0]`, o sea sangría
+   izquierda sin barra ni cursiva. Añadir aquí una barra vertical se vería bien en pantalla y no se
+   imprimiría. Como esta barra no ofrece ningún otro modo de sangrar, un bloque sangrado es, sin
+   ambigüedad, una cita. */
+.app-rich-editor-content blockquote {
+  margin: 0 0 0.65rem 1.7rem;
+}
+
+/* El `<hr>` del editor imita la regla que dibuja el PDF: una línea fina y gris de ancho completo. */
+.app-rich-editor-content hr {
+  height: 0;
+  margin: 0.9rem 0;
+  border: 0;
+  border-top: 1px solid var(--color-base-300);
+}
+
+/* La raya seleccionada tiene que NOTARSE: es un nodo que se borra con Suprimir, y sin señal de
+   selección el decisor no sabría que la tiene cogida. */
+.app-rich-editor-content hr.ProseMirror-selectednode {
+  border-top-color: var(--color-primary);
+}
+
+/* Las listas SE VEN como listas dentro del editor: son lo que el sistema convierte en la numeración
+   del documento (1.1, 2.1 PRIMERO…, 3.2.1), así que el decisor tiene que reconocerlas al escribir. */
+.app-rich-editor-content ol,
+.app-rich-editor-content ul {
+  margin: 0 0 0.65rem 1.25rem;
+  padding-left: 0.75rem;
+}
+
+.app-rich-editor-content ol {
+  list-style: decimal;
+}
+
+.app-rich-editor-content ul {
+  list-style: disc;
+}
+
+/* Marca de agua del editor vacío: sin ella, una sección en blanco no se distingue de una cargando. */
+.app-rich-editor-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+/* ── Badges de tokens ─────────────────────────────────────────────────────────────────────────── */
+
+.app-token-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.app-token-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 1.6rem;
+  padding: 0 0.6rem;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  border: 1px dashed var(--color-primary);
+  color: var(--color-primary);
+  background-color: transparent;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.app-token-badge:hover {
+  background-color: var(--color-base-200);
+}

@@ -1,0 +1,6 @@
+.app-modules-panel > .app-section-header {
+  min-height: 3.12rem;
+  gap: 0.535rem;
+  padding-top: 0.713rem !important;
+  padding-bottom: 0.713rem !important;
+}
